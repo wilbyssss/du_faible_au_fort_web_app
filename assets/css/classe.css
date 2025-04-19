@@ -1,0 +1,199 @@
+/* Styles généraux */
+body {
+ font-family: Arial, sans-serif;
+ margin: 0;
+ padding: 0;
+ background-color: #f4f4f4;
+}
+
+/* Contenu principal avec marge pour éviter qu'il ne touche le slider et le header */
+.content {
+ margin-left: 270px; /* Décalage pour ne pas toucher le slider */
+ margin-top: 80px;  /* Décalage pour éviter le header */
+ padding: 20px;
+ background: white;
+ border-radius: 10px;
+ max-width: 90%;
+ box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Tableaux */
+table {
+ width: 100%;
+ border-collapse: collapse;
+ background: white;
+ border-radius: 10px;
+ overflow: hidden;
+}
+
+th, td {
+ padding: 12px;
+ text-align: left;
+ border-bottom: 1px solid #ddd;
+}
+
+th {
+ background: #222;
+ color: white;
+}
+
+/* Boutons */
+.btn-new {
+ background: green;
+ color: white;
+ padding: 10px 15px;
+ border: none;
+ cursor: pointer;
+ margin-bottom: 15px;
+ border-radius: 5px;
+}
+
+.btn-edit, .btn-delete {
+ padding: 6px 12px;
+ border: none;
+ cursor: pointer;
+ border-radius: 5px;
+}
+
+.btn-edit {
+ background: #008cff;
+ color: white;
+}
+
+.btn-delete {
+ background: red;
+ color: white;
+}
+/* Formulaire d'ajout*/
+#form-container {
+
+ position: absolute;
+ top: -300px; /* Initialement en dehors de la vue (au-dessus) */
+ left: 50%;
+ transform: translateX(-50%);
+ background: #fff; /* Fond blanc */
+ padding: 20px;
+ margin-top: 15px;
+ border-radius: 10px;
+ width: 350px;
+ box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Ombre douce autour du formulaire */
+ opacity: 0; /* Initialement invisible */
+ transition: top 0.3s ease, opacity 0.3s ease; /* Animation fluide */
+}
+
+/* Quand le formulaire devient visible */
+#form-container.show {
+ top: 80px; /* Positionne-le juste en dessous du header */
+ opacity: 1; /* Rendre visible */
+}
+
+/* Styles des champs de formulaire */
+#form-container input {
+ width: 100%; /* Champs de formulaire à pleine largeur */
+ padding: 10px;
+ margin: 10px 0; /* Espacement entre les champs */
+ border: 1px solid #ddd; /* Bordure légère */
+ border-radius: 5px;
+ font-size: 14px;
+ box-sizing: border-box;
+}
+
+/* Styles pour les boutons */
+.btn-save, .btn-cancel {
+ padding: 10px 20px;
+ border: none;
+ border-radius: 5px;
+ cursor: pointer;
+ font-size: 16px;
+ width: 100%; /* Les boutons prennent toute la largeur */
+ transition: background 0.3s ease; /* Effet de transition pour l'interaction */
+}
+
+.btn-save {
+ background-color: #28a745; /* Vert pour le bouton "Enregistrer" */
+ color: white;
+}
+
+.btn-save:hover {
+ background-color: #218838; /* Vert foncé au survol */
+}
+
+.btn-cancel {
+ background-color: #dc3545; /* Rouge pour le bouton "Annuler" */
+ color: white;
+ margin-top: 10px;
+}
+
+.btn-cancel:hover {
+ background-color: #c82333; /* Rouge foncé au survol */
+}
+
+/* Styles pour les messages d'alerte */
+.alert {
+ padding: 15px;
+ margin-bottom: 20px;
+ border-radius: 5px;
+ font-size: 16px;
+ text-align: center;
+}
+
+.success {
+ background-color: #28a745;
+ color: white;
+}
+
+.error {
+ background-color: #dc3545;
+ color: white;
+}
+
+
+/* Responsive pour petits écrans */
+@media (max-width: 600px) {
+ #form-container {
+     width: 90%; /* Le formulaire prend presque toute la largeur sur mobile */
+ }
+}
+
+#form-container-modify {
+
+    position: absolute;
+    top: -300px;
+    /* Initialement en dehors de la vue (au-dessus) */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff;
+    /* Fond blanc */
+    padding: 20px;
+    margin-top: 15px;
+    border-radius: 10px;
+    width: 350px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    /* Ombre douce autour du formulaire */
+    opacity: 0;
+    /* Initialement invisible */
+    transition: top 0.3s ease, opacity 0.3s ease;
+    /* Animation fluide */
+}
+
+/* Quand le formulaire devient visible */
+#form-container-modify.show {
+    top: 80px;
+    /* Positionne-le juste en dessous du header */
+    opacity: 1;
+    /* Rendre visible */
+}
+
+/* Styles des champs de formulaire */
+#form-container-modify input {
+    width: 100%;
+    /* Champs de formulaire à pleine largeur */
+    padding: 10px;
+    margin: 10px 0;
+    /* Espacement entre les champs */
+    border: 1px solid #ddd;
+    /* Bordure légère */
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
