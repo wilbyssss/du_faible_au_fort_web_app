@@ -20,6 +20,7 @@ $database = new Database();
 $conn = $database->getConnection();
 
 ?>
+ <meta charset="UTF-8">
 <link rel="stylesheet" href="<?php echo $baseUrl;?>assets/css/texte_training.css">
 <link rel="stylesheet" href="<?php echo $baseUrl; ?>assets/css/pagination.css">
 <div class="content">
@@ -54,9 +55,9 @@ $totalPages = ceil($totalItems / $limit);
             $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
             $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
             $stmt->execute();
-            $niveau = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            foreach ($niveau as $row) {
+            foreach ($result as $row) {
                 echo "<tr>";
                 echo "<td>" . htmlspecialchars($row['titre_text']) . "</td>";
                 echo "<td>" . htmlspecialchars($row['contenu_text_training']) . "</td>";
@@ -67,13 +68,16 @@ $totalPages = ceil($totalItems / $limit);
                 echo "</select>";
                 echo "</td>";
                 echo "<td>"
-                    . "<a href='#' class='btn-link' onclick='editText("
-                    . $row['id_text_training'] . ", "
-                    . json_encode($row['titre_text']) . ", "
-                    . json_encode($row['contenu_text_training']) . ")'>Modifier</a> "
-                    . "<a href='#' class='btn-link delete' onclick='deleteText(" . $row['id_text_training'] . ",\"". $id ."\")'>Supprimer</a>"
-                    . "</td>";
-                echo "</tr>";
+                . "<a href='#' class='btn-link' onclick='editText("
+                . htmlspecialchars($row['id_text_training']) . ", "
+                . htmlspecialchars(json_encode($row['titre_text']), ENT_QUOTES, 'UTF-8') . ", "
+                . htmlspecialchars(json_encode($row['contenu_text_training']), ENT_QUOTES, 'UTF-8')
+                . ")'>Modifier</a> "
+                . "<a href='#' class='btn-link delete' onclick='deleteText("
+                . htmlspecialchars($row['id_text_training']) . ", "
+                . json_encode($id) . ")'>Supprimer</a>"
+                . "</td>";
+             
             }
             ?>
   </tbody>
@@ -101,7 +105,7 @@ $totalPages = ceil($totalItems / $limit);
    <label for="nom">Titre :</label>
    <input type="text" id="nom" name="titre_texte" required>
    <label for="instruction">Contenu :</label>
-   <textarea id="instruction" name="contenu" required></textarea>
+   <textarea id="instruction" name="contenu" required style="height:200px"></textarea>
    <button type="submit" class="btn-save">Enregistrer</button>
    <button class="btn-cancel" onclick="toggleForm()">Annuler</button>
   </form>
@@ -114,7 +118,7 @@ $totalPages = ceil($totalItems / $limit);
    <label for="nom">Titre :</label>
    <input type="text" id="nom-text-modify" name="titre_texte" required>
    <label for="contenu">Contenu :</label>
-   <textarea id="contenu-text-modify" name="contenu" required></textarea>
+   <textarea id="contenu-text-modify" name="contenu" required style="height:200px"></textarea>
    <button type="submit" class="btn-save">Enregistrer</button>
    <button class="btn-cancel" onclick="toggleFormUpdate()">Annuler</button>
   </form>

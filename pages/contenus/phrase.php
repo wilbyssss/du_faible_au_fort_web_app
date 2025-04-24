@@ -19,17 +19,6 @@ if (!isset($_SESSION['connecte']) || $_SESSION['connecte'] !== true) {
 $database = new Database();
 $conn = $database->getConnection();
 
-$message = $_SESSION['message'] ?? null;
-$message_type = $_SESSION['message_type'] ?? null;
-
-if (isset($message)) {
-    echo $message_type == "success" 
-        ? "<div class='alert success'>$message</div>" 
-        : "<div class='alert error'>$message</div>";
-    
-    unset($_SESSION['message']);
-    unset($_SESSION['message_type']);
-}
 ?>
 <link rel="stylesheet" href="<?php echo $baseUrl; ?>assets/css/phrase.css">
 <link rel="stylesheet" href="<?php echo $baseUrl; ?>assets/css/pagination.css">
@@ -103,13 +92,13 @@ if (isset($message)) {
         <h2>Ajouter une Phrase à trou</h2>
         <form action="<?php echo $baseUrl; ?>pages/contenus/crud/phrase/ajout_phrase.php?id=<?php echo $id;?>" method="POST">
             <label for="libelle_phrase">Phrase (utilisez _ pour indiquer le trou) :</label>
-            <input type="text" id="libelle_phrase" name="libelle_phrase" placeholder="Ex: Le chat _ sur le tapis" required>
+            <input type="text" id="libelle_phrase" name="libelle_phrase" placeholder="Ex: Le chat _ sur le tapis ou il fait _ ce _." style="height:90px">
             
             <label for="indication">Indication :</label>
-            <input type="text" id="indication" name="indication" placeholder="Que fait le chat?" required>
+            <input type="text" id="indication" name="indication" placeholder="Que fait le chat?(si il n'y'a aucune indication laisser vide)" required>
             
             <label for="reponse">Réponse :</label>
-            <input type="text" id="reponse" name="reponse" placeholder="dort" required>
+            <input type="text" id="reponse" name="reponse" placeholder="dort(au cas où vous aurez plusieurs reponses séparés ces dernières par une virgule)" required style="height:90px">
             
             <label for="exercice_id">Exercice associé :</label>
             <select id="exercice_id" name="exercice_id" required>
@@ -138,13 +127,13 @@ if (isset($message)) {
             <input type="hidden" id="id_phrase_modify" name="id_phrase_a_trou">
             
             <label for="libelle_phrase_modify">Phrase :</label>
-            <input type="text" id="libelle_phrase_modify" name="libelle_phrase" placeholder="Utilisez _ pour le trou" required>
+            <input type="text" id="libelle_phrase_modify" name="libelle_phrase" placeholder="Utilisez _ pour le trou" required style="height:90px">
             
             <label for="indication_modify">Indication :</label>
-            <input type="text" id="indication_modify" name="indication" required>
+            <input type="text" id="indication_modify" name="indication">
             
             <label for="reponse_modify">Réponse :</label>
-            <input type="text" id="reponse_modify" name="reponse" required>
+            <input type="text" id="reponse_modify" name="reponse" required style="height:90px">
             
             <label for="exercice_id_modify">Exercice associé :</label>
             <select id="exercice_id_modify" name="exercice_id" required>

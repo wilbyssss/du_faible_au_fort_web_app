@@ -11,7 +11,8 @@ require_once __DIR__ . '/header.php';
     <!-- Liens CSS -->
     <link rel="stylesheet" href="<?php echo $header->getCssUrl('header.css'); ?>">
     <link rel="stylesheet" href="<?php echo $header->getCssUrl('slider_bar.css'); ?>">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Favicon -->
     <link rel="icon" href="<?php echo $header->getBaseUrl(); ?>images/favicon.ico">
 </head>

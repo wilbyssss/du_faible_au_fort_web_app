@@ -12,7 +12,7 @@ $id = $_GET['id'] ?? null;
     <div class="dropdown">
         <a href="#">Administration ▾</a>
         <div class="dropdown-content">
-            <a href="<?php echo $base_url; ?>pages/admin/user.php?id=<?php echo $id?>">Utilisateurs Administration</a>
+            <a href="<?php echo $base_url; ?>pages/admin/user_admin.php?id=<?php echo $id?>">Utilisateurs Administration</a>
             <a href="<?php echo $base_url; ?>pages/admin/role_admin.php?id=<?php echo $id?>">Roles</a>
         </div>
     </div>
