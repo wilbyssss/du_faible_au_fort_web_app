@@ -1,183 +1,183 @@
 <?php
+// 1. INITIALISATION ET SÉCURITÉ
 session_start();
-$id = $_GET['id'] ?? null;
 $baseUrl = "/du_faible_au_fort/";
-require_once('../../connect_database.php');
-include('../../includes/header_view.php');
-include('../../includes/slider_bar.php');
-// Empêcher la mise en cache
+$id = $_GET['id'] ?? null;
+
+// Headers anti-cache
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-// Vérifier la connexion
+// 2. VÉRIFICATION AUTHENTIFICATION
 if (!isset($_SESSION['connecte']) || $_SESSION['connecte'] !== true) {
     header('Location: ../login.php');
     exit;
 }
 
+// 3. CONNEXION BASE DE DONNÉES
+require_once('../../connect_database.php');
 $database = new Database();
 $conn = $database->getConnection();
 
-// Traitement des actions
+// 4. TRAITEMENT DES ACTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
-        switch ($_POST['action']) {
-            case 'add':
-                // Ajouter un rôle
-                $stmt = $conn->prepare("INSERT INTO roles_admin (nom_role) VALUES (?, ?)");
-                $stmt->execute([$_POST['nom']]);
-                break;
-                
-            case 'edit':
-                // Modifier un rôle
-                $stmt = $conn->prepare("UPDATE roles_admin SET nom_role = ? WHERE id_role = ?");
-                $stmt->execute([$_POST['nom'], $_POST['id']]);
-                break;
-                
-            case 'delete':
-                // Supprimer un rôle (vérifier d'abord s'il n'est pas utilisé)
-                $check = $conn->prepare("SELECT COUNT(*) FROM administration WHERE id_role = ?");
-                $check->execute([$_POST['id']]);
-                $count = $check->fetchColumn();
-                
-                if ($count == 0) {
-                    $stmt = $conn->prepare("DELETE FROM role_admin WHERE id_role = ?");
-                    $stmt->execute([$_POST['id']]);
-                } else {
-                    $_SESSION['error'] = "Ce rôle est utilisé par des utilisateurs et ne peut pas être supprimé.";
-                }
-                break;
+        try {
+            switch ($_POST['action']) {
+                case 'add':
+                    $stmt = $conn->prepare("INSERT INTO roles_admin (nom_role) VALUES (?)");
+                    $stmt->execute([$_POST['nom']]);
+                    $_SESSION['message'] = "Rôle ajouté avec succès";
+                    $_SESSION['message_type'] = "success";
+                    break;
+                    
+                case 'update':
+                    $stmt = $conn->prepare("UPDATE roles_admin SET nom_role = ? WHERE id_role = ?");
+                    $stmt->execute([$_POST['nom'], $_POST['id']]);
+                    $_SESSION['message'] = "Rôle modifié avec succès";
+                    $_SESSION['message_type'] = "success";
+                    break;
+                    
+                case 'delete':
+                    // Vérification avant suppression
+                    $checkUtilisateurs = $conn->prepare("SELECT COUNT(*) FROM administration WHERE role_admin = ?");
+                    $checkUtilisateurs->execute([$_POST['id']]);
+                    $countUtilisateurs = $checkUtilisateurs->fetchColumn();
+                    
+                    if ($countUtilisateurs == 0) {
+                        $stmt = $conn->prepare("DELETE FROM roles_admin WHERE id_role = ?");
+                        $stmt->execute([$_POST['id']]);
+                        $_SESSION['message'] = "Rôle supprimé avec succès";
+                        $_SESSION['message_type'] = "success";
+                    } else {
+                        $_SESSION['message'] = "Ce rôle ne peut pas être supprimé car il est attribué à des utilisateurs";
+                        $_SESSION['message_type'] = "error";
+                    }
+                    break;
+            }
+        } catch (PDOException $e) {
+            $_SESSION['message'] = "Erreur: " . $e->getMessage();
+            $_SESSION['message_type'] = "error";
         }
     }
-    // Rediriger pour éviter la soumission multiple
     header("Location: role_admin.php?id=".$id);
     exit;
 }
 
-// Récupérer les rôles
+// 5. INCLUSIONS DES COMPOSANTS VISUELS
+include('../../includes/header_view.php');
+include('../../includes/slider_bar.php');
+
+// 6. RÉCUPÉRATION DES DONNÉES
 $roles = $conn->query("SELECT * FROM roles_admin")->fetchAll(PDO::FETCH_ASSOC);
 ?>
-    <style>
-        .action-btn {
-            margin: 0 3px;
-            padding: 5px 10px;
-        }
-        .form-container {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        .form-container.active {
-            display: block;
-        }
-        .alert {
-            margin-top: 20px;
-        }
-    </style>
 
-    <div class="container" style="margin-top:100px";>
-        <h2>Gestion des rôles</h2>
-        
-        <!-- Affichage des erreurs -->
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger"><?= $_SESSION['error'] ?></div>
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
-        
-        <!-- Boutons d'action -->
-        <div class="mb-3">
-            <button class="btn btn-primary" onclick="showForm('add')">
-                <i class="bi bi-plus-circle"></i> Ajouter un rôle
-            </button>
+<div class="container" style="margin-top:100px; margin-left:17%;">
+    <!-- Affichage des messages -->
+    <?php if (isset($_SESSION['message'])): ?>
+        <div class="alert alert-<?= $_SESSION['message_type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show">
+            <?= htmlspecialchars($_SESSION['message']) ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
-        
-        <!-- Formulaire d'ajout -->
-        <div id="add-form" class="form-container">
-            <h4>Ajouter un rôle</h4>
-            <form method="POST">
-                <input type="hidden" name="action" value="add">
-                <div class="row mb-3">
-                    <div class="col-md-6">
+        <?php
+        unset($_SESSION['message']);
+        unset($_SESSION['message_type']);
+        ?>
+    <?php endif; ?>
+
+    <div class="card shadow-sm">
+        <!-- En-tête -->
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Gestion des Rôles</h3>
+                <button class="btn btn-light" onclick="toggleForm()">
+                    <i class="bi bi-plus-lg"></i> Nouveau rôle
+                </button>
+            </div>
+        </div>
+
+        <!-- Formulaire unique pour ajout/modification -->
+        <div id="form-container" class="card mb-4 d-none">
+            <div class="card-body">
+                <h4 class="card-title" id="form-title">Ajouter un Rôle</h4>
+                <form method="POST" id="role-form">
+                    <input type="hidden" name="action" id="form-action" value="add">
+                    <input type="hidden" name="id" id="id_role">
+                    
+                    <div class="mb-3">
                         <label class="form-label">Nom du rôle</label>
-                        <input type="text" name="nom" class="form-control" required>
+                        <input type="text" class="form-control" id="nom_role" name="nom" required>
                     </div>
-                </div>
-                <button type="submit" class="btn btn-success">Enregistrer</button>
-                <button type="button" class="btn btn-secondary" onclick="hideForms()">Annuler</button>
-            </form>
-        </div>
-        
-        <!-- Formulaire de modification -->
-        <div id="edit-form" class="form-container">
-            <h4>Modifier le rôle</h4>
-            <form method="POST">
-                <input type="hidden" name="action" value="edit">
-                <input type="hidden" name="id" id="edit-id">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Nom du rôle</label>
-                        <input type="text" name="nom" id="edit-nom" class="form-control" required>
+                    
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" onclick="toggleForm()">Annuler</button>
+                        <button type="submit" class="btn btn-success">Enregistrer</button>
                     </div>
-                </div>
-                <button type="submit" class="btn btn-success">Enregistrer</button>
-                <button type="button" class="btn btn-secondary" onclick="hideForms()">Annuler</button>
-            </form>
+                </form>
+            </div>
         </div>
-        
+
         <!-- Tableau des rôles -->
-        <div class="table-responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($roles as $role): ?>
-                    <tr>
-                        <td><?= $role['id_role'] ?></td>
-                        <td><?= htmlspecialchars($role['nom_role']) ?></td>
-                        <td>
-                            <button class="btn btn-sm btn-warning action-btn" 
-                                    onclick="showEditForm(<?= $role['id_role'] ?>, '<?= htmlspecialchars($role['nom_role']) ?>')">
-                                <i class="bi bi-pencil"></i> Modifier
-                            </button>
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="id" value="<?= $role['id_role'] ?>">
-                                <button type="submit" class="btn btn-sm btn-danger action-btn" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rôle?')">
-                                    <i class="bi bi-trash"></i> Supprimer
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($roles as $role): ?>
+                        <tr>
+                            <td><?= $role['id_role'] ?></td>
+                            <td><?= htmlspecialchars($role['nom_role']) ?></td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary" 
+                                            onclick="editRole(<?= $role['id_role'] ?>, '<?= htmlspecialchars(addslashes($role['nom_role'])) ?>')">
+                                        <i class="bi bi-pencil"></i> Modifier
+                                    </button>
+                                    <form method="POST" class="d-inline">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="id" value="<?= $role['id_role'] ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rôle ?')">
+                                            <i class="bi bi-trash"></i> Supprimer
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function showForm(formType) {
-            hideForms();
-            document.getElementById(formType + '-form').classList.add('active');
-        }
-        
-        function hideForms() {
-            document.querySelectorAll('.form-container').forEach(form => {
-                form.classList.remove('active');
-            });
-        }
-        
-        function showEditForm(id, nom) {
-            document.getElementById('edit-id').value = id;
-            document.getElementById('edit-nom').value = nom;
-            showForm('edit');
-        }
-    </script>
+<script>
+// Gestion des formulaires
+function toggleForm(editing = false) {
+    const form = document.getElementById('form-container');
+    form.classList.toggle('d-none');
+    
+    if (editing) {
+        document.getElementById('form-title').textContent = "Modifier un Rôle";
+        document.getElementById('form-action').value = "update";
+    } else {
+        document.getElementById('form-title').textContent = "Ajouter un Rôle";
+        document.getElementById('form-action').value = "add";
+        document.getElementById('role-form').reset();
+    }
+}
+
+function editRole(id, nom) {
+    document.getElementById('id_role').value = id;
+    document.getElementById('nom_role').value = nom;
+    toggleForm(true);
+}
+</script>

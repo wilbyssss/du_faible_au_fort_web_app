@@ -1,4 +1,5 @@
 <?php
+error_reporting(0);
 // Définir la racine du projet de manière dynamique
 define('ROOT_PATH', realpath(dirname(__DIR__)));
 define('BASE_URL', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]/du_faible_au_fort/");

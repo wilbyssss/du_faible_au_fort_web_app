@@ -83,7 +83,7 @@ $roles = $conn->query("SELECT * FROM roles_admin")->fetchAll(PDO::FETCH_ASSOC);
  display: block;
 }
 </style>
-<div class="container" style=" margin-top:100px;">
+<div class="container" style=" margin-top:100px; margin-left: 20%; ">
  <h2>Gestion des utilisateurs</h2>
 
  <!-- Boutons d'action -->
@@ -159,7 +159,7 @@ $roles = $conn->query("SELECT * FROM roles_admin")->fetchAll(PDO::FETCH_ASSOC);
  </div>
 
  <!-- Tableau des utilisateurs -->
- <div class="table-responsive">
+ <div class="table-responsive container">
   <table class="table table-striped table-hover">
    <thead>
     <tr>
@@ -167,6 +167,7 @@ $roles = $conn->query("SELECT * FROM roles_admin")->fetchAll(PDO::FETCH_ASSOC);
      <th>Nom</th>
      <th>Email</th>
      <th>Rôle</th>
+     <th>Statut</th>
      <th>Actions</th>
     </tr>
    </thead>
@@ -177,6 +178,7 @@ $roles = $conn->query("SELECT * FROM roles_admin")->fetchAll(PDO::FETCH_ASSOC);
      <td><?= htmlspecialchars($user['username_admin']) ?></td>
      <td><?= htmlspecialchars($user['email_admin']) ?></td>
      <td><?= htmlspecialchars($user['role_nom']) ?></td>
+     <td><?= (htmlspecialchars($user['statut_admin']) != 0) ? "en ligne" : "hors ligne" ?></td>
      <td>
       <button class="btn btn-sm btn-warning action-btn"
        onclick="showEditForm(<?= $user['id_admin'] ?>, '<?= htmlspecialchars($user['username_admin']) ?>', '<?= htmlspecialchars($user['email_admin']) ?>', <?= $user['role_admin'] ?>)">
@@ -198,15 +200,15 @@ $roles = $conn->query("SELECT * FROM roles_admin")->fetchAll(PDO::FETCH_ASSOC);
 
   <div class="pagination">
     <?php if ($page > 1): ?>
-        <a href="?page=<?= $page - 1 ?>">Précédent</a>
+        <a href="?page=<?= $page - 1 ?>&id=<?= $id?>">Précédent</a>
     <?php endif; ?>
     
     <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-        <a href="?page=<?= $i ?>" <?= $i === $page ? 'class="active"' : '' ?>><?= $i ?></a>
+        <a href="?page=<?= $i ?>&id=<?= $id?>" <?= $i === $page ? 'class="active"' : '' ?>><?= $i ?></a>
     <?php endfor; ?>
     
     <?php if ($page < $totalPages): ?>
-        <a href="?page=<?= $page + 1 ?>">Suivant</a>
+        <a href="?page=<?= $page + 1 ?>&id=<?= $id?>">Suivant</a>
     <?php endif; ?>
     </div>
  </div>

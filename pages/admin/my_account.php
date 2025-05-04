@@ -1,4 +1,5 @@
 <?php 
+error_reporting(0);
 session_start();
 $baseUrl = "/du_faible_au_fort/";
 require_once('../../connect_database.php');
@@ -18,7 +19,6 @@ include('../../includes/slider_bar.php');
 ?>
 
     <link rel="stylesheet" href="<?php echo $baseUrl?>assets/css/my_account.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <div class="profile-containers" style="margin-top: 150px;">
         <div class="profile-header">
             <div class="avatar">

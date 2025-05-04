@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = "localhost"; 
-    private $db_name = "du_faible_au_fort"; 
+    private $db_name = "faiblefort"; 
     private $username = "lenyx"; 
     private $password = "password"; 
     private $conn;
