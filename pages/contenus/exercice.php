@@ -26,24 +26,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             switch ($_POST['action']) {
                 case 'add':
-                    $stmt = $conn->prepare("INSERT INTO exercice_a_trou (libelle_ex, instruction_globale, id_theme, id_text_training) VALUES (?, ?, ?, ?)");
+                    $stmt = $conn->prepare("INSERT INTO exercice_a_trou (libelle_ex, instruction_globale, id_theme, id_text_training, niveauId) VALUES (?, ?, ?, ?, ?)");
                     $stmt->execute([
                         $_POST['libelle'],
                         $_POST['instruction'],
                         $_POST['theme_id'],
-                        !empty($_POST['texte_id']) ? $_POST['texte_id'] : null
+                        !empty($_POST['texte_id']) ? $_POST['texte_id'] : null,
+                        $_POST['niveau_id']
                     ]);
                     $_SESSION['message'] = "Exercice ajouté avec succès";
                     $_SESSION['message_type'] = "success";
                     break;
                     
                 case 'update':
-                    $stmt = $conn->prepare("UPDATE exercice_a_trou SET libelle_ex = ?, instruction_globale = ?, id_theme = ?, id_text_training = ? WHERE id_ex_trou = ?");
+                    $stmt = $conn->prepare("UPDATE exercice_a_trou SET libelle_ex = ?, instruction_globale = ?, id_theme = ?, id_text_training = ?, niveauId = ? WHERE id_ex_trou = ?");
                     $stmt->execute([
                         $_POST['libelle'],
                         $_POST['instruction'],
                         $_POST['theme_id'],
                         !empty($_POST['texte_id']) ? $_POST['texte_id'] : null,
+                        $_POST['niveau_id'],
                         $_POST['id_ex_trou']
                     ]);
                     $_SESSION['message'] = "Exercice modifié avec succès";
@@ -139,7 +141,7 @@ include('../../includes/slider_bar.php');
                             </div>
                             
                             <div class="row mb-3">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label">Thème</label>
                                     <select class="form-select" id="theme_id" name="theme_id" required>
                                         <option value="">-- Sélectionnez un thème --</option>
@@ -151,7 +153,19 @@ include('../../includes/slider_bar.php');
                                     </select>
                                 </div>
                                 
-                                <div class="col-md-6">
+                                <div class="col-md-4">
+                                    <label class="form-label">Niveau de difficulté</label>
+                                    <select class="form-select" id="niveau_id" name="niveau_id" required>
+                                        <option value="">-- Sélectionnez un niveau --</option>
+                                        <?php
+                                        $niveaux = $conn->query("SELECT * FROM niveau_difficulte")->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($niveaux as $niveau): ?>
+                                            <option value="<?= $niveau['id_niveau'] ?>"><?= htmlspecialchars($niveau['nom_niveau']) ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                
+                                <div class="col-md-4">
                                     <label class="form-label">Texte d'entraînement</label>
                                     <select class="form-select" id="texte_id" name="texte_id">
                                         <option value="">-- Sélectionnez un texte --</option>
@@ -181,6 +195,7 @@ include('../../includes/slider_bar.php');
                                     <th>Libellé</th>
                                     <th>Instruction Globale</th>
                                     <th>Thème Associé</th>
+                                    <th>Niveau</th>
                                     <th>Texte d'entraînement</th>
                                     <th class="text-end">Actions</th>
                                 </tr>
@@ -199,10 +214,11 @@ include('../../includes/slider_bar.php');
                                 $totalPages = ceil($totalItems / $limit);
 
                                 // Récupération des exercices
-                                $query = "SELECT e.*, t.nom_theme, te.titre_text 
-                                         FROM exercice_a_trou AS e 
-                                         INNER JOIN themes AS t ON e.id_theme = t.id_theme 
-                                         LEFT JOIN text_training AS te ON e.id_text_training = te.id_text_training
+                                $query = "SELECT e.*, t.nom_theme, te.titre_text, n.nom_niveau
+                                         FROM exercice_a_trou e
+                                         LEFT JOIN themes t ON e.id_theme = t.id_theme
+                                         LEFT JOIN text_training te ON e.id_text_training = te.id_text_training
+                                         LEFT JOIN niveau_difficulte n ON e.niveauId = n.id_niveau
                                          LIMIT :limit OFFSET :offset";
                                 $stmt = $conn->prepare($query);
                                 $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
@@ -215,7 +231,8 @@ include('../../includes/slider_bar.php');
                                 <tr>
                                     <td><?= htmlspecialchars($exercice['libelle_ex']) ?></td>
                                     <td><?= htmlspecialchars($exercice['instruction_globale']) ?></td>
-                                    <td><?= htmlspecialchars($exercice['nom_theme']) ?></td>
+                                    <td><?= htmlspecialchars($exercice['nom_theme'] ?? 'Non défini') ?></td>
+                                    <td><?= htmlspecialchars($exercice['nom_niveau'] ?? 'Non défini') ?></td>
                                     <td><?= htmlspecialchars($exercice['titre_text'] ?? 'Aucun texte') ?></td>
                                     <td class="text-end">
                                         <div class="btn-group">
@@ -224,6 +241,7 @@ include('../../includes/slider_bar.php');
                                                 '<?= htmlspecialchars(addslashes($exercice['libelle_ex'])) ?>',
                                                 '<?= htmlspecialchars(addslashes($exercice['instruction_globale'])) ?>',
                                                 <?= $exercice['id_theme'] ?>,
+                                                <?= $exercice['niveauId'] ?? 'null' ?>,
                                                 <?= $exercice['id_text_training'] ?? 'null' ?>
                                             )">
                                                 <i class="bi bi-pencil"></i> Modifier
@@ -292,11 +310,12 @@ function toggleForm(editing = false) {
     }
 }
 
-function editExercice(id, libelle, instruction, themeId, texteId) {
+function editExercice(id, libelle, instruction, themeId, niveauId, texteId) {
     document.getElementById('id_exercice').value = id;
     document.getElementById('libelle').value = libelle;
     document.getElementById('instruction').value = instruction;
     document.getElementById('theme_id').value = themeId;
+    document.getElementById('niveau_id').value = niveauId !== 'null' ? niveauId : '';
     document.getElementById('texte_id').value = texteId !== 'null' ? texteId : '';
     
     toggleForm(true);
