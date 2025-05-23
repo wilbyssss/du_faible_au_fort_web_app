@@ -48,7 +48,7 @@ $id = $_GET['id'] ?? null;
                 </a>
                 <div class="collapse" id="contentCollapse">
                     <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                        <li><a href="<?= $base_url ?>pages/contenus/theme.php?id=<?= $id ?>" class="nav-link link-dark rounded">Thèmes</a></li>
+                        <li><a href="<?= $base_url ?>pages/contenus/theme.php?id=<?= $id ?>" class="nav-link link-dark rounded">Histoires</a></li>
                         <li><a href="<?= $base_url ?>pages/contenus/phrase.php?id=<?= $id ?>" class="nav-link link-dark rounded">Phrases à trou</a></li>
                         <li><a href="<?= $base_url ?>pages/contenus/exercice.php?id=<?= $id ?>" class="nav-link link-dark rounded">Exercices</a></li>
                         <li><a href="<?= $base_url ?>pages/contenus/niveau_difficult.php?id=<?= $id ?>" class="nav-link link-dark rounded">Niveaux</a></li>

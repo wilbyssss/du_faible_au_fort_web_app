@@ -65,7 +65,7 @@ include('../../includes/header_view.php');
 include('../../includes/slider_bar.php');
 ?>
 
-<div class="container" style="margin-top:100px; margin-left:17%;">
+<div class="container" style="margin-top:100px; margin-left:20%; width: 80%;">
     <!-- Affichage des messages -->
     <?php if (isset($_SESSION['message'])): ?>
         <div class="alert alert-<?= $_SESSION['message_type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show">

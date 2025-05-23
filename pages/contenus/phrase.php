@@ -92,7 +92,7 @@ include('../../includes/header_view.php');
 include('../../includes/slider_bar.php');
 ?>
 
-<div class="container" style="margin-top:100px; margin-left:17%;">
+<div class="container" style="margin-top:100px; margin-left:20%; width: 80%;">
     <!-- Affichage des messages -->
     <?php if (isset($_SESSION['message'])): ?>
         <div class="alert alert-<?= $_SESSION['message_type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show">
@@ -109,7 +109,7 @@ include('../../includes/slider_bar.php');
         <!-- En-tête -->
         <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
-                <h3 class="mb-0">Phrases à Trou</h3>
+                <h3 class="mb-0">Phrases à trou</h3>
                 <button class="btn btn-light" onclick="toggleForm()">
                     <i class="bi bi-plus-lg"></i> Nouvelle phrase
                 </button>
@@ -119,14 +119,14 @@ include('../../includes/slider_bar.php');
         <!-- Formulaire (caché par défaut) -->
         <div id="form-container" class="card mb-4 d-none">
             <div class="card-body">
-                <h4 class="card-title" id="form-title">Ajouter une Phrase à trou</h4>
+                <h4 class="card-title" id="form-title">Ajouter une phrase à trou</h4>
                 <form method="POST" id="phrase-form">
                     <input type="hidden" name="action" id="form-action" value="add">
                     <input type="hidden" name="id_phrase_a_trou" id="id_phrase">
                     
                     <div class="row mb-3">
                         <div class="col-md-12">
-                            <label class="form-label">Phrase (utilisez _ pour le trou)</label>
+                            <label class="form-label">Phrase (utilisez _ pour créer le trou)</label>
                             <textarea class="form-control" id="libelle_phrase" name="libelle_phrase" rows="3" required></textarea>
                         </div>
                     </div>

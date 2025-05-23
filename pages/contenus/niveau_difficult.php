@@ -102,7 +102,7 @@ include('../../includes/header_view.php');
 include('../../includes/slider_bar.php');
 ?>
 
-<div class="container" style="margin-top:100px; margin-left:17%;">
+<div class="container" style="margin-top:100px; margin-left:20%; width: 80%;">
     <!-- Affichage des messages -->
     <?php if (isset($_SESSION['message'])): ?>
         <div class="alert alert-<?= $_SESSION['message_type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show">
@@ -217,15 +217,34 @@ include('../../includes/slider_bar.php');
                                     <td><?= htmlspecialchars($row['nom_niveau']) ?></td>
                                     <td>
                                         <?php
+                                        // Paramètres de pagination
+                                        $classesParPage = 2;
+                                        $page = isset($_GET['page_' . $row['id_niveau']]) ? (int)$_GET['page_' . $row['id_niveau']] : 1;
+                                        $offset = ($page - 1) * $classesParPage;
+
+                                        // Total des classes pour ce niveau
+                                        $queryTotal = "SELECT COUNT(*) FROM avoir WHERE id_niveau = :id_niveau";
+                                        $stmtTotal = $conn->prepare($queryTotal);
+                                        $stmtTotal->bindParam(':id_niveau', $row['id_niveau']);
+                                        $stmtTotal->execute();
+                                        $totalClasses = $stmtTotal->fetchColumn();
+                                        $nbPages = ceil($totalClasses / $classesParPage);
+
                                         $queryClasses = "SELECT c.id_classe, c.nom_classe 
-                                                        FROM avoir a
-                                                        JOIN classes c ON a.id_classe = c.id_classe
-                                                        WHERE a.id_niveau = :id_niveau
-                                                        ORDER BY c.nom_classe";
+                                                            FROM avoir a
+                                                            JOIN classes c ON a.id_classe = c.id_classe
+                                                            WHERE a.id_niveau = :id_niveau
+                                                            ORDER BY c.nom_classe
+                                                            LIMIT :limit OFFSET :offset";
+
                                         $stmtClasses = $conn->prepare($queryClasses);
                                         $stmtClasses->bindParam(':id_niveau', $row['id_niveau']);
+                                        $stmtClasses->bindParam(':limit', $classesParPage, PDO::PARAM_INT);
+                                        $stmtClasses->bindParam(':offset', $offset, PDO::PARAM_INT);
                                         $stmtClasses->execute();
                                         $classes = $stmtClasses->fetchAll(PDO::FETCH_ASSOC);
+
+
                                         
                                         if (count($classes) > 0):
                                         ?>
@@ -245,27 +264,38 @@ include('../../includes/slider_bar.php');
                                             </li>
                                             <?php endforeach; ?>
                                         </ul>
+                                         <nav aria-label="Page navigation" class="mt-4">
+                                            <ul class="pagination justify-content-center">
+                                                <?php for ($i = 1; $i <= $nbPages; $i++): ?>
+                                                    <li class="page-item <?= ($i === $page) ? 'active' : '' ?>">
+                                                        <a class="page-link" href="?page_<?= $row['id_niveau'] ?>=<?= $i ?>&id=<?= $id ?>">
+                                                            <?= $i ?>
+                                                        </a>
+                                                    </li>
+                                                <?php endfor; ?>
+                                            </ul>
+                                        </nav>
                                         <?php else: ?>
                                         <span class="text-muted">Aucune classe associée</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end">
                                         <div class="btn-group">
-                                            <button class="btn btn-sm btn-warning" onclick="editNiveau(<?= $row['id_niveau'] ?>, '<?= htmlspecialchars(addslashes($row['nom_niveau'])) ?>')">
-                                                <i class="bi bi-pencil"></i> Modifier
+                                            <button class="btn btn-sm btn-outline-primary" onclick="editNiveau(<?= $row['id_niveau'] ?>, '<?= htmlspecialchars(addslashes($row['nom_niveau'])) ?>')">
+                                                <i class="bi bi-pencil"></i>
                                             </button>
                                             
                                             <form method="POST" class="d-inline">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="id" value="<?= $row['id_niveau'] ?>">
-                                                <button type="submit" class="btn btn-sm btn-danger" 
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                         onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce niveau ?')">
-                                                    <i class="bi bi-trash"></i> Supprimer
+                                                    <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
                                             
-                                            <button class="btn btn-sm btn-info" onclick="showAffectForm(<?= $row['id_niveau'] ?>)">
-                                                <i class="bi bi-link-45deg"></i> Affecter
+                                            <button class="btn btn-sm btn-outline-secondary" onclick="showAffectForm(<?= $row['id_niveau'] ?>)">
+                                                <i class="bi bi-link-45deg"></i> 
                                             </button>
                                         </div>
                                     </td>

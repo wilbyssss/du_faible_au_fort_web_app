@@ -3,6 +3,7 @@ session_start();
 require_once('../connect_database.php');
 include('../includes/header_view.php');
 include('../includes/slider_bar.php');
+require_once '../services/get_count_users.php';
 // Empêcher la mise en cache
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
@@ -39,6 +40,11 @@ $stats = [
     'eleves_actifs' => ['value' => 342, 'evolution' => '+8'],
     'moyenne_scores' => ['value' => '78%', 'evolution' => '+5%']
 ];
+
+$users = new Users();
+$countUser = $users->GetCountUserRegistrer();
+$countUserA = $users->GetUsersAtifs();
+$users_actifs = $countUserA == 0 ? 'Aucun utilisateur actif' : $countUserA;
 ?>
 
 <!DOCTYPE html>
@@ -276,18 +282,18 @@ $stats = [
         }
 
         .demo-blur:hover {
-    filter: blur(0);
-    opacity: 1;
-    transform: translateY(-5px);
-    box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
-    animation: pulse 1.5s infinite;
-}
+        filter: blur(0);
+        opacity: 1;
+        transform: translateY(-5px);
+        box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        animation: pulse 1.5s infinite;
+        }
 
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(251, 99, 64, 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(251, 99, 64, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(251, 99, 64, 0); }
-}
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(251, 99, 64, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 99, 64, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 99, 64, 0); }
+        }
     </style>
 </head>
 <body>
@@ -296,26 +302,26 @@ $stats = [
         <div class="demo-alert" style="...">
             <i class="fas fa-chalkboard-teacher" style="font-size: 1.5rem; margin-right: 15px;"></i>
             <div>
-                <h3 style="margin: 0 0 5px 0;">Tableau de Bord Pédagogique (Démo)</h3>
+                <h3 style="margin: 0 0 5px 0;">Tableau de bord</h3>
                 <p style="margin: 0; opacity: 0.9; font-size: 0.9rem;">
-                    Données simulées pour présentation des fonctionnalités
+                   
                 </p>
             </div>
         </div>
 
         <!-- Section Statistiques -->
-        <h2 class="section-title">Indicateurs Clés</h2>
+        <h2 class="section-title">Indicateurs</h2>
         <div class="cards-grid demo-mode">
             <div class="demo-watermark"></div>
             <div class="card demo-blur">
                 <div class="card-body">
                     <div class="stats-badge">
-                        <i class="fas fa-book-open"></i>
-                        Exercices réalisés
+                        <i class="fas fa-user-graduate"></i>
+                       Inscrits
                     </div>
-                    <div class="stats-value"><?= number_format($stats['exercices_completes']['value'], 0, ',', ' ') ?></div>
+                    <div class="stats-value"><?= $countUser ?></div>
                     <div class="stats-comparison positive">
-                        <i class="fas fa-arrow-up"></i> <?= $stats['exercices_completes']['evolution'] ?> ce mois-ci
+                        <i class="fas fa-arrow-up"></i> 
                     </div>
                 </div>
             </div>
@@ -324,11 +330,11 @@ $stats = [
                 <div class="card-body">
                     <div class="stats-badge">
                         <i class="fas fa-user-graduate"></i>
-                        Élèves actifs
+                        Nombre des parties
                     </div>
-                    <div class="stats-value"><?= $stats['eleves_actifs']['value'] ?></div>
+                    <div class="stats-value"><?= $users_actifs ?></div>
                     <div class="stats-comparison positive">
-                        <i class="fas fa-user-plus"></i> <?= $stats['eleves_actifs']['evolution'] ?> nouveaux
+                        <i class="fas fa-user-plus"></i> 
                     </div>
                 </div>
             </div>
@@ -375,7 +381,7 @@ $stats = [
         </div>
         
         <!-- Section Élèves -->
-        <h2 class="section-title">Suivi des Élèves</h2>
+        <h2 class="section-title">Progression</h2>
         <div class="cards-grid demo-mode">
             <div class="demo-watermark"></div>
             <?php foreach ($eleves as $eleve): ?>
@@ -408,7 +414,7 @@ $stats = [
         </div>
         
         <!-- Section Ressources -->
-        <h2 class="section-title">Ressources Pédagogiques</h2>
+        <h2 class="section-title">Au grenier</h2>
         <div class="cards-grid demo-mode">
             <div class="demo-watermark"></div>
             <?php foreach ($ressources as $ressource): ?>

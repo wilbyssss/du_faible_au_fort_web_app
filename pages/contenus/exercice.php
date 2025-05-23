@@ -92,7 +92,7 @@ include('../../includes/header_view.php');
 include('../../includes/slider_bar.php');
 ?>
 
-<div class="container" style="margin-top:100px; margin-left:17%;">
+<div class="container" style="margin-top:100px; margin-left:20%; width: 80%;">
     <!-- Affichage des messages -->
     <?php if (isset($_SESSION['message'])): ?>
         <div class="alert alert-<?= $_SESSION['message_type'] === 'success' ? 'success' : 'danger' ?> alert-dismissible fade show">
@@ -236,7 +236,7 @@ include('../../includes/slider_bar.php');
                                     <td><?= htmlspecialchars($exercice['titre_text'] ?? 'Aucun texte') ?></td>
                                     <td class="text-end">
                                         <div class="btn-group">
-                                            <button class="btn btn-sm btn-warning" onclick="editExercice(
+                                            <button class="btn btn-sm btn-outline-primary" onclick="editExercice(
                                                 <?= $exercice['id_ex_trou'] ?>,
                                                 '<?= htmlspecialchars(addslashes($exercice['libelle_ex'])) ?>',
                                                 '<?= htmlspecialchars(addslashes($exercice['instruction_globale'])) ?>',
@@ -244,15 +244,14 @@ include('../../includes/slider_bar.php');
                                                 <?= $exercice['niveauId'] ?? 'null' ?>,
                                                 <?= $exercice['id_text_training'] ?? 'null' ?>
                                             )">
-                                                <i class="bi bi-pencil"></i> Modifier
+                                                <i class="bi bi-pencil"></i> 
                                             </button>
                                             
                                             <form method="POST" class="d-inline">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="id" value="<?= $exercice['id_ex_trou'] ?>">
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet exercice ?')">
-                                                    <i class="bi bi-trash"></i> Supprimer
-                                                </button>
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet exercice ?')">
+                                                    <i class="bi bi-trash"></i></button>
                                             </form>
                                         </div>
                                     </td>
