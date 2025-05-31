@@ -4,19 +4,18 @@ $id = $_GET['id'] ?? null;
 $baseUrl = "/du_faible_au_fort/";
 require_once('../../connect_database.php');
 include('../../includes/header_view.php');
-include('../../includes/slider_bar.php');
-// Empêcher la mise en cache
+include('../../includes/slider_bar.php') ;
+
+// Headers anti-cache
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
 
-// Vérifier la connexion
+// 2. VÉRIFICATION AUTHENTIFICATION
 if (!isset($_SESSION['connecte']) || $_SESSION['connecte'] !== true) {
- echo '<script>alert("session expiré")</script>';
     header('Location: ../login.php');
     exit;
 }
-
 $database = new Database();
 $conn = $database->getConnection();
 

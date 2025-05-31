@@ -109,9 +109,9 @@ include('../../includes/slider_bar.php');
         <!-- En-tête -->
         <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
-                <h3 class="mb-0">Phrases à trou</h3>
+                <h3 class="mb-0">Enoncés à trou</h3>
                 <button class="btn btn-light" onclick="toggleForm()">
-                    <i class="bi bi-plus-lg"></i> Nouvelle phrase
+                    <i class="bi bi-plus-lg"></i> Nouveau
                 </button>
             </div>
         </div>
@@ -193,7 +193,7 @@ include('../../includes/slider_bar.php');
                                         '<?= htmlspecialchars(addslashes($phrase['reponse_correspondante'])) ?>',
                                         <?= $phrase['id_ex_trou'] ?>
                                     )">
-                                        <i class="bi bi-pencil"></i>
+                                        <i class="bi bi-pencil"></i>Modifier
                                     </button>
                                     
                                     <form method="POST" class="d-inline">
@@ -201,7 +201,7 @@ include('../../includes/slider_bar.php');
                                         <input type="hidden" name="id" value="<?= $phrase['id_phrase_a_trou'] ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette phrase ?')">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="bi bi-trash"></i>Supprimer
                                         </button>
                                     </form>
                                 </div>
@@ -249,10 +249,10 @@ function toggleForm(editing = false) {
     form.classList.toggle('d-none');
     
     if (editing) {
-        document.getElementById('form-title').textContent = "Modifier une Phrase à trou";
+        document.getElementById('form-title').textContent = "Modifier un énoncé à trou";
         document.getElementById('form-action').value = "update";
     } else {
-        document.getElementById('form-title').textContent = "Ajouter une Phrase à trou";
+        document.getElementById('form-title').textContent = "Ajouter un énoncé à trou";
         document.getElementById('form-action').value = "add";
         document.getElementById('phrase-form').reset();
     }

@@ -19,6 +19,12 @@ require_once('../../connect_database.php');
 $database = new Database();
 $conn = $database->getConnection();
 
+// Récupération des détails du texte à afficher
+if (isset($_SESSION['text_details'])) {
+    $result = $_SESSION['text_details'];
+    unset($_SESSION['text_details']);
+}
+
 // Traitement des actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
@@ -59,6 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['message_type'] = 'error';
                 }
                 break;
+         case 'show':
+            $stmt = $conn->prepare('SELECT * FROM text_training WHERE id_text_training = ?');
+            $stmt->execute([$_POST['id']]);
+            $_SESSION['text_details'] = $stmt->fetch(PDO::FETCH_ASSOC);
+            break;
+            
         }
     }
     header("Location: texte_training.php?id=".$id);
@@ -85,7 +97,7 @@ include('../../includes/slider_bar.php');
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
-                <h3 class="mb-0">Textes d'entraînement</h3>
+                <h3 class="mb-0">Histoires</h3>
                 <button class="btn btn-light" onclick="toggleForm()">
                     <i class="bi bi-plus-lg"></i> Nouveau
                 </button>
@@ -95,7 +107,7 @@ include('../../includes/slider_bar.php');
         <!-- Formulaire unique (ajout/modif) -->
         <div id="form-container" class="card mt-3 d-none">
             <div class="card-header bg-info text-white">
-                <h4 class="mb-0" id="form-title">Ajouter un texte</h4>
+                <h4 class="mb-0" id="form-title">Ajouter une histoire</h4>
             </div>
             <div class="card-body">
                 <form method="POST" id="text-form">
@@ -120,6 +132,28 @@ include('../../includes/slider_bar.php');
             </div>
         </div>
 
+        <div id="text-details-container" class="card mt-3 d-none">
+    <div class="card-header bg-info text-white">
+        <h4 class="mb-0">Détails du texte</h4>
+        <button type="button" class="btn-close btn-close-white float-end" onclick="hideDetails()" aria-label="Close"></button>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Titre</label>
+            <p id="detail-titre" class="form-control-plaintext border-bottom pb-2"></p>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label fw-bold">Contenu</label>
+            <div id="detail-contenu" class="form-control-plaintext border rounded p-3 bg-light" style="white-space: pre-wrap;"></div>
+        </div>
+        
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-secondary" onclick="hideDetails()">Fermer</button>
+        </div>
+    </div>
+</div>
+
         <div class="card-body">
             <!-- Tableau responsive -->
             <div class="table-responsive">
@@ -134,24 +168,24 @@ include('../../includes/slider_bar.php');
                     </thead>
                     <tbody>
                         <?php
-                        $limit = 10;
-                        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-                        $offset = ($page - 1) * $limit;
+                            $limit = 10;
+                            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                            $offset = ($page - 1) * $limit;
 
-                        // Pagination
-                        $countStmt = $conn->prepare("SELECT COUNT(*) FROM text_training");
-                        $countStmt->execute();
-                        $totalItems = $countStmt->fetchColumn();
-                        $totalPages = ceil($totalItems / $limit);
+                            // Pagination
+                            $countStmt = $conn->prepare("SELECT COUNT(*) FROM text_training");
+                            $countStmt->execute();
+                            $totalItems = $countStmt->fetchColumn();
+                            $totalPages = ceil($totalItems / $limit);
 
-                        // Récupération données
-                        $stmt = $conn->prepare("SELECT * FROM text_training LIMIT :limit OFFSET :offset");
-                        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-                        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
-                        $stmt->execute();
-                        $textes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            // Récupération données
+                            $stmt = $conn->prepare("SELECT * FROM text_training LIMIT :limit OFFSET :offset");
+                            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+                            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+                            $stmt->execute();
+                            $textes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                        foreach ($textes as $texte):
+                            foreach ($textes as $texte):
                         ?>
                         <tr>
                             <td><?= htmlspecialchars($texte['titre_text']) ?></td>
@@ -172,14 +206,21 @@ include('../../includes/slider_bar.php');
                                             onclick="editText(<?= $texte['id_text_training'] ?>, 
                                                       '<?= htmlspecialchars(addslashes($texte['titre_text'])) ?>', 
                                                       `<?= htmlspecialchars(addslashes($texte['contenu_text_training'])) ?>`)">
-                                        <i class="bi bi-pencil"></i>
+                                        <i class="bi bi-pencil"></i> Modifier
                                     </button>
+                                    <form method="POST" class="d-inline">
+                                        <input type="hidden" name="action" value="show">
+                                        <input type="hidden" name="id" value="<?= $texte['id_text_training'] ?>">
+                                        <button type="submit" class="btn btn-outline-success">
+                                            <i class="bi bi-info"></i> Afficher
+                                        </button>
+                                    </form>
                                     <form method="POST" class="d-inline">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= $texte['id_text_training'] ?>">
                                         <button type="submit" class="btn btn-outline-danger" 
                                                 onclick="return confirm('Supprimer définitivement ce texte ?')">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="bi bi-trash"></i> Supprimer
                                         </button>
                                     </form>
                                 </div>
@@ -228,10 +269,10 @@ function toggleForm(editing = false) {
     form.classList.toggle('d-none');
     
     if (editing) {
-        document.getElementById('form-title').textContent = "Modifier un texte";
+        document.getElementById('form-title').textContent = "Modifier une histoire";
         document.getElementById('form-action').value = "edit";
     } else {
-        document.getElementById('form-title').textContent = "Ajouter un texte";
+        document.getElementById('form-title').textContent = "Ajouter une histoire";
         document.getElementById('form-action').value = "add";
         document.getElementById('text-form').reset();
     }
@@ -243,4 +284,26 @@ function editText(id, titre, contenu) {
     document.getElementById('contenu-text').value = contenu;
     toggleForm(true);
 }
+
+// Fonction pour afficher les détails
+function showDetails(titre, contenu) {
+    document.getElementById('detail-titre').textContent = titre;
+    document.getElementById('detail-contenu').textContent = contenu;
+    document.getElementById('text-details-container').classList.remove('d-none');
+}
+
+// Fonction pour cacher les détails
+function hideDetails() {
+    document.getElementById('text-details-container').classList.add('d-none');
+}
+
+// Modifiez le traitement du formulaire 'show' pour afficher les détails
+document.addEventListener('DOMContentLoaded', function() {
+    <?php if (isset($result) && !empty($result)): ?>
+        showDetails(
+            <?= json_encode($result['titre_text']) ?>, 
+            <?= json_encode($result['contenu_text_training']) ?>
+        );
+    <?php endif; ?>
+});
 </script>

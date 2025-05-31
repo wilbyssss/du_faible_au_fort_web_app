@@ -81,7 +81,7 @@ include('../../includes/slider_bar.php');
             <!-- En-tête -->
             <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
-                <h3 class="mb-0">Classes</h3>
+                <h3 class="mb-0">Cycles</h3>
                 <button class="btn btn-light" onclick="toggleForm()">
                     <i class="bi bi-plus-lg"></i> Nouveau
                 </button>
@@ -91,13 +91,13 @@ include('../../includes/slider_bar.php');
          <!-- Formulaire unique pour ajout/modification -->
     <div id="form-container" class="card mt-3 d-none">
         <div class="card-body">
-            <h4 class="card-title" id="form-title">Ajouter une Classe</h4>
+            <h4 class="card-title" id="form-title">Ajouter un cycle</h4>
             <form method="POST" id="classe-form">
                 <input type="hidden" name="action" id="form-action" value="add">
                 <input type="hidden" name="id_classe" id="id_classe">
                 
                 <div class="mb-3">
-                    <label class="form-label">Nom de la classe</label>
+                    <label class="form-label">Nom du cycle</label>
                     <input type="text" class="form-control" id="nom_classe" name="nom_classe" required>
                 </div>
                 
@@ -114,7 +114,7 @@ include('../../includes/slider_bar.php');
         <table class="table table-striped table-hover">
             <thead class="table-light">
                 <tr>
-                    <th>Nom de la classe</th>
+                    <th>Nom du cycle</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
@@ -147,14 +147,14 @@ include('../../includes/slider_bar.php');
                         <div class="btn-group">
                             <button class="btn btn-sm btn-outline-primary" 
                                     onclick="editClasse(<?= $classe['id_classe'] ?>, '<?= htmlspecialchars(addslashes($classe['nom_classe'])) ?>')">
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-pencil"></i>Modifier
                             </button>
                             <form method="POST" class="d-inline">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?= $classe['id_classe'] ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette classe ?')">
-                                        <i class="bi bi-trash"></i>
+                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cycle ?')">
+                                        <i class="bi bi-trash"></i>Supprimer
                                 </button>
                             </form>
                         </div>
@@ -200,10 +200,10 @@ function toggleForm(editing = false) {
     form.classList.toggle('d-none');
     
     if (editing) {
-        document.getElementById('form-title').textContent = "Modifier une Classe";
+        document.getElementById('form-title').textContent = "Modifier un cycle";
         document.getElementById('form-action').value = "edit";
     } else {
-        document.getElementById('form-title').textContent = "Ajouter une Classe";
+        document.getElementById('form-title').textContent = "Ajouter un cycle";
         document.getElementById('form-action').value = "add";
         document.getElementById('classe-form').reset();
     }

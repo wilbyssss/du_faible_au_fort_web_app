@@ -119,7 +119,7 @@ include('../../includes/slider_bar.php');
         <div class="col-md-12">
             <!-- En-tête -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="mb-0">Liste des Niveaux</h2>
+                <h2 class="mb-0">Niveaux de difficulté</h2>
                 <button class="btn btn-primary" onclick="toggleForm()">
                     <i class="bi bi-plus-circle"></i> Nouveau
                 </button>
@@ -149,13 +149,13 @@ include('../../includes/slider_bar.php');
             <!-- Formulaire d'affectation -->
             <div id="form-affect-container" class="card mb-4 d-none">
                 <div class="card-body">
-                    <h4 class="card-title">Affecter à une classe</h4>
+                    <h4 class="card-title">Affecter à un cycle</h4>
                     <form method="POST" id="affect-form">
                         <input type="hidden" name="action" value="affect">
                         <input type="hidden" name="id_niveau" id="affect_id_niveau">
                         
                         <div class="mb-3">
-                            <label class="form-label">Classe</label>
+                            <label class="form-label">cycle</label>
                             <select class="form-select" id="id_classe" name="id_classe" required>
                                 <option value="">-- Sélectionner une classe --</option>
                                 <?php
@@ -187,7 +187,7 @@ include('../../includes/slider_bar.php');
                             <thead class="table-light">
                                 <tr>
                                     <th>Nom</th>
-                                    <th>Classes associées</th>
+                                    <th>cycles associés</th>
                                     <th class="text-end">Actions</th>
                                 </tr>
                             </thead>
@@ -258,7 +258,7 @@ include('../../includes/slider_bar.php');
                                                     <input type="hidden" name="id_classe" value="<?= $classe['id_classe'] ?>">
                                                     <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                             onclick="return confirm('Supprimer cette affectation ?')">
-                                                        <i class="bi bi-x"></i>
+                                                        <i class="bi bi-x"></i>Supprimer
                                                     </button>
                                                 </form>
                                             </li>
@@ -282,7 +282,7 @@ include('../../includes/slider_bar.php');
                                     <td class="text-end">
                                         <div class="btn-group">
                                             <button class="btn btn-sm btn-outline-primary" onclick="editNiveau(<?= $row['id_niveau'] ?>, '<?= htmlspecialchars(addslashes($row['nom_niveau'])) ?>')">
-                                                <i class="bi bi-pencil"></i>
+                                                <i class="bi bi-pencil"></i>Modifier
                                             </button>
                                             
                                             <form method="POST" class="d-inline">
@@ -290,12 +290,12 @@ include('../../includes/slider_bar.php');
                                                 <input type="hidden" name="id" value="<?= $row['id_niveau'] ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                         onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce niveau ?')">
-                                                    <i class="bi bi-trash"></i>
+                                                    <i class="bi bi-trash"></i>Supprimer
                                                 </button>
                                             </form>
                                             
                                             <button class="btn btn-sm btn-outline-secondary" onclick="showAffectForm(<?= $row['id_niveau'] ?>)">
-                                                <i class="bi bi-link-45deg"></i> 
+                                                <i class="bi bi-link-45deg"></i> Affecter
                                             </button>
                                         </div>
                                     </td>

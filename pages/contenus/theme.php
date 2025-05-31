@@ -87,7 +87,7 @@ include('../../includes/slider_bar.php');
         <!-- En-tête -->
         <div class="card-header bg-primary text-white">
             <div class="d-flex justify-content-between align-items-center">
-                <h3 class="mb-0">Histoires</h3>
+                <h3 class="mb-0">Séries</h3>
                 <button class="btn btn-light" onclick="toggleForm()">
                     <i class="bi bi-plus-lg"></i> Nouveau
                 </button>
@@ -97,13 +97,13 @@ include('../../includes/slider_bar.php');
                 <!-- Formulaire unique pour ajout/modification -->
                 <div id="form-container" class="card mt-3 d-none">
             <div class="card-body">
-                <h4 class="card-title" id="form-title">Ajouter une histoire</h4>
+                <h4 class="card-title" id="form-title">Ajouter une série</h4>
                 <form method="POST" id="theme-form">
                     <input type="hidden" name="action" id="form-action" value="add">
                     <input type="hidden" name="id_theme" id="id_theme">
                     
                     <div class="mb-3">
-                        <label class="form-label">Titre de l'histoire</label>
+                        <label class="form-label">Titre de la série</label>
                         <input type="text" class="form-control" id="nom_theme" name="nom_theme" required>
                     </div>
                     
@@ -154,14 +154,14 @@ include('../../includes/slider_bar.php');
                                 <div class="btn-group">
                                     <button class="btn btn-sm btn-outline-primary" 
                                             onclick="editTheme(<?= $theme['id_theme'] ?>, '<?= htmlspecialchars(addslashes($theme['nom_theme'])) ?>')">
-                                        <i class="bi bi-pencil"></i>
+                                        <i class="bi bi-pencil"></i>Modifier
                                     </button>
                                     <form method="POST" class="d-inline">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<?= $theme['id_theme'] ?>">
                                         <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce thème ?')">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="bi bi-trash"></i>supprimer
                                         </button>
                                     </form>
                                 </div>
@@ -209,10 +209,10 @@ function toggleForm(editing = false) {
     form.classList.toggle('d-none');
     
     if (editing) {
-        document.getElementById('form-title').textContent = "Modifier une catégorie d'histoire";
+        document.getElementById('form-title').textContent = "Modifier une série";
         document.getElementById('form-action').value = "update";
     } else {
-        document.getElementById('form-title').textContent = "Ajouter une catégorie d'histoire";
+        document.getElementById('form-title').textContent = "Ajouter une série";
         document.getElementById('form-action').value = "add";
         document.getElementById('theme-form').reset();
     }

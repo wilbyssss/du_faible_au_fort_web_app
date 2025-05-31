@@ -111,7 +111,7 @@ include('../../includes/slider_bar.php');
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0">Exercices</h3>
+                        <h3 class="mb-0">Bouche-trous</h3>
                         <button class="btn btn-light" onclick="toggleForm()">
                             <i class="bi bi-plus-lg"></i> Nouveau
                         </button>
@@ -135,16 +135,16 @@ include('../../includes/slider_bar.php');
                             
                             <div class="row mb-3">
                                 <div class="col-md-12">
-                                    <label class="form-label">Instruction Globale</label>
+                                    <label class="form-label">Consigne générale</label>
                                     <textarea class="form-control" id="instruction" name="instruction" rows="3" required></textarea>
                                 </div>
                             </div>
                             
                             <div class="row mb-3">
                                 <div class="col-md-4">
-                                    <label class="form-label">Thème</label>
+                                    <label class="form-label">Histoire à croquer</label>
                                     <select class="form-select" id="theme_id" name="theme_id" required>
-                                        <option value="">-- Sélectionnez un thème --</option>
+                                        <option value="">-- Sélectionnez une histoire à croquer--</option>
                                         <?php
                                         $themes = $conn->query("SELECT * FROM themes")->fetchAll(PDO::FETCH_ASSOC);
                                         foreach ($themes as $theme): ?>
@@ -166,9 +166,9 @@ include('../../includes/slider_bar.php');
                                 </div>
                                 
                                 <div class="col-md-4">
-                                    <label class="form-label">Texte d'entraînement</label>
+                                    <label class="form-label">Histoire</label>
                                     <select class="form-select" id="texte_id" name="texte_id">
-                                        <option value="">-- Sélectionnez un texte --</option>
+                                        <option value="">-- Sélectionnez une histoire --</option>
                                         <?php
                                         $textes = $conn->query("SELECT * FROM text_training")->fetchAll(PDO::FETCH_ASSOC);
                                         foreach ($textes as $texte): ?>
@@ -193,10 +193,10 @@ include('../../includes/slider_bar.php');
                             <thead class="table-light">
                                 <tr>
                                     <th>Libellé</th>
-                                    <th>Instruction Globale</th>
-                                    <th>Thème Associé</th>
+                                    <th>Consigne générale</th>
+                                    <th>Histoire à croquer</th>
                                     <th>Niveau</th>
-                                    <th>Texte d'entraînement</th>
+                                    <th>Histoire</th>
                                     <th class="text-end">Actions</th>
                                 </tr>
                             </thead>
@@ -244,14 +244,14 @@ include('../../includes/slider_bar.php');
                                                 <?= $exercice['niveauId'] ?? 'null' ?>,
                                                 <?= $exercice['id_text_training'] ?? 'null' ?>
                                             )">
-                                                <i class="bi bi-pencil"></i> 
+                                                <i class="bi bi-pencil"></i> Modifier
                                             </button>
                                             
                                             <form method="POST" class="d-inline">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="id" value="<?= $exercice['id_ex_trou'] ?>">
                                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet exercice ?')">
-                                                    <i class="bi bi-trash"></i></button>
+                                                    <i class="bi bi-trash"></i>Supprimer</button>
                                             </form>
                                         </div>
                                     </td>
@@ -300,10 +300,10 @@ function toggleForm(editing = false) {
     form.classList.toggle('d-none');
     
     if (editing) {
-        document.getElementById('form-title').textContent = "Modifier un Exercice";
+        document.getElementById('form-title').textContent = "Modifier un bouche-trous";
         document.getElementById('form-action').value = "update";
     } else {
-        document.getElementById('form-title').textContent = "Ajouter un Exercice";
+        document.getElementById('form-title').textContent = "Ajouter un bouche-trous";
         document.getElementById('form-action').value = "add";
         document.getElementById('exercice-form').reset();
     }
